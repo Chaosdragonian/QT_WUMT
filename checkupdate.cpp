@@ -1,5 +1,4 @@
-﻿#include "checkupdate.h"
-#include <iostream>
+﻿#include <iostream>
 #include <wuapi.h>
 #include <ATLComTime.h>
 #include <wuerror.h>
@@ -31,16 +30,20 @@
 #include <QDebug>
 #include <QTextCodec>
 #include <locale>
-
+#include <qstandarditemmodel.h>
+#include <qcheckbox.h>
+#include <qtablewidget.h>
+#include "checkupdate.h"
 
 #pragma warning(disable:4996)
 //#pragma execution_character_set("utf-8")
 
 using namespace std;
 
-QString checkupdate::update()
+
+QStringList checkupdate::update()
 {
-	QString returnResult;
+	QStringList returnResult;
 	HRESULT hr;
 //	QLocale curLocale(QLocale("kor"));
 //	QLocale::setDefault(curLocale);
@@ -56,18 +59,18 @@ QString checkupdate::update()
 			hr = CoCreateInstance(CLSID_UpdateSession, NULL, CLSCTX_INPROC_SERVER, IID_IUpdateSession, (LPVOID*)&iUpdate);
 			hr = iUpdate->CreateUpdateSearcher(&searcher);
 			//std::wcout.imbue(std::locale("korean"));
-			returnResult = QString::fromLocal8Bit("업데이트를 찾고 있습니다",-1);
+			qDebug() << QString::fromLocal8Bit("업데이트를 찾고 있습니다",-1) <<endl;
 			hr = searcher->Search(criteria, &results);
 			SysFreeString(criteria);
 
 			switch (hr) {
 			case S_OK:
-				QTextStream(&returnResult) << L"시스템에 적용 할 수있는 목록:" << endl;
+				qDebug() << L"시스템에 적용 할 수있는 목록:" << endl;
 				break;
 			case WU_E_LEGACYSERVER:
-				QTextStream(&returnResult) << L"서버를 찾을수 없다" << endl;
+				qDebug() << L"서버를 찾을수 없다" << endl;
 			case WU_E_INVALID_CRITERIA:
-				QTextStream(&returnResult) << L"잘못된 검색 기준입니다." << endl;
+				qDebug() << L"잘못된 검색 기준입니다." << endl;
 			}
 
 			IUpdateCollection* updateList;
@@ -84,7 +87,7 @@ QString checkupdate::update()
 			updateList->get_Count(&updateSize);
 
 			if (updateSize == 0) {
-				QTextStream(&returnResult) << L"업데이트 할수 있는 목록이 없습니다." << endl;
+				qDebug() << L"업데이트 할수 있는 목록이 없습니다." << endl;
 			}
 
 			for (LONG i = 0; i < updateSize; i++) {
@@ -95,11 +98,13 @@ QString checkupdate::update()
 				wcscpy(nameofUpdate, updateName);
 				severity = NULL;
 				updateItem->get_MsrcSeverity(&severity);
-				if (severity != NULL) {
-					QTextStream(&returnResult) << QString::fromWCharArray(L" 보안 업데이트: ", -1) << severity << endl;
-				}
+				//if (severity != NULL) {
+				//	returnResult << QString::fromWCharArray(L" 보안 업데이트: ", -1) << severity << endl;
+				//}
 				//qDebug(updateName);
-				QTextStream(&returnResult) << i + 1 << " : " << QString::fromWCharArray(nameofUpdate, -1) << endl;
+				QString resultstring;
+				resultstring << i + 1 << " : " << QString::fromWCharArray(nameofUpdate, -1) << endl
+				*returnResult <<resultstring << endl;
 
 				// bundled updates
 				updateItem->get_BundledUpdates(&bundledUpdates);
@@ -112,7 +117,7 @@ QString checkupdate::update()
 						severity = NULL;
 						bundledUpdateItem->get_MsrcSeverity(&severity);
 						if (severity != NULL) {
-							QTextStream(&returnResult) << QString::fromWCharArray(L" 번들 업데이트: ",-1) << severity << endl;
+							qDebug() << QString::fromWCharArray(L" 번들 업데이트: ",-1) << severity << endl;
 						}
 					}
 				}
@@ -121,13 +126,17 @@ QString checkupdate::update()
 			::CoUninitialize();
 			qDebug() << returnResult;
 			return returnResult;
-	}
+	
+}
 
 
-QString checkupdate::history() {
+
+QStringList checkupdate::history() {
 	HRESULT hr;
 	hr = CoInitialize(NULL);
 	QString histories;
+	QStringList updatehistoryList;
+
 
 
 	IUpdateSession* iUpdate;
@@ -147,13 +156,13 @@ QString checkupdate::history() {
 	hr = searcher->QueryHistory(0, historyCount, &historyEntryCollection);
 	//hr = historyEntryCollection->get_Item()
 
-	QTextStream(&histories)  << L"Searching for recent updates ..." << endl;
+	qDebug()  << L"Searching for recent updates ..." << endl;
 	//SysFreeString(criteria);
 
 	switch (hr)
 	{
 	case S_OK:
-		QTextStream(&histories) << L"List of applicable items on the machine:" << endl;
+		qDebug() << L"List of applicable items on the machine:" << endl;
 		break;
 	}
 	setlocale(LC_ALL, "Korean");
@@ -169,7 +178,6 @@ QString checkupdate::history() {
 	for (LONG i = 0; i < historyCount; ++i)
 	{
 
-
 		hr = historyEntryCollection->get_Item(i, &historyEntry);
 
 		hr = historyEntry->get_Title(&updateName);
@@ -180,7 +188,7 @@ QString checkupdate::history() {
 	//		nameofUpdate[35] = ' ';
 		//}
 		//outfile << nameofUpdate << std::endl;
-		QTextStream(&histories) << QString::fromWCharArray(nameofUpdate, -1)<<endl;
+		//QTextStream(&histories) << QString::fromWCharArray(nameofUpdate, -1)<<endl;
 
 		//	hr = historyEntry->get_ServiceID(&ClientAppID);
 		//	UINT idlength = SysStringLen(ClientAppID);
@@ -197,18 +205,44 @@ QString checkupdate::history() {
 
 		//	upTime = DateTime::FromOADate(retdate);
 		dateupdate = retdate;
+		QString updateDate;
 		int year = dateupdate.GetYear();
 		int month = dateupdate.GetMonth();
 		int day = dateupdate.GetDay();
 		//outfile << L"update date : " << year << "/" << month << "/" << day << std::endl;
-		QTextStream(&histories) << year << "/" << month << "/" << day << endl;
-
+		QTextStream(&updateDate) << year << "/" << month << "/" << day << endl;
+	//	setitem
 		SysFreeString(updateName);
 		//		SysFreeString(ClientAppID);
+		QString nameofupdateString;
+		nameofupdateString << QString::fromWCharArray(nameofUpdate, -1) <<endl;
+		updatehistoryList << nameofupdateString <<endl;
+		updatehistoryList << updateDate <<endl;
+		return updatehistoryList;
 	}
 	//outfile.close();
 	::CoUninitialize();
 	wcin.get();
-	return histories;
+	return updatehistoryList;
 
+}
+int checkupdate::historyNum(){
+	HRESULT hr;
+	hr = CoInitialize(NULL);
+	QString histories;
+
+
+	IUpdateSession* iUpdate;
+	IUpdateSearcher* searcher;
+	IUpdateHistoryEntryCollection* historyEntryCollection;
+	IUpdateHistoryEntry* historyEntry;
+	//BSTR criteria = SysAllocString(L"IsInstalled=1 or IsHidden=1 or IsPresent=1");
+	LONG historyCount = 0;
+
+	hr = CoCreateInstance(CLSID_UpdateSession, NULL, CLSCTX_INPROC_SERVER, IID_IUpdateSession, (LPVOID*)&iUpdate);
+	hr = iUpdate->CreateUpdateSearcher(&searcher);
+	hr = searcher->GetTotalHistoryCount(&historyCount);
+	hr = searcher->QueryHistory(0, historyCount, &historyEntryCollection);
+
+	return (int)historyCount;
 }

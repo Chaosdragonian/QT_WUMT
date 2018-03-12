@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>598</width>
+    <width>811</width>
     <height>526</height>
    </rect>
   </property>
@@ -14,43 +14,43 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="label">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>70</y>
-      <width>541</width>
-      <height>421</height>
+      <x>10</x>
+      <y>20</y>
+      <width>86</width>
+      <height>54</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Wait</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>update check</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>history check</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QTableWidget" name="TableWidget">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>10</y>
-      <width>191</width>
-      <height>41</height>
+      <x>30</x>
+      <y>90</y>
+      <width>481</width>
+      <height>401</height>
      </rect>
     </property>
-    <property name="text">
-     <string>update check</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>10</y>
-      <width>141</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>history check</string>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
     </property>
    </widget>
   </widget>

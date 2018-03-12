@@ -14,9 +14,10 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -25,26 +26,41 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
-    QLabel *label;
+    QWidget *layoutWidget;
+    QVBoxLayout *verticalLayout;
     QPushButton *pushButton;
     QPushButton *pushButton_2;
+    QTableView *view;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(598, 526);
+        MainWindow->resize(811, 526);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        label = new QLabel(centralWidget);
-        label->setObjectName(QStringLiteral("label"));
-        label->setGeometry(QRect(20, 70, 541, 421));
-        pushButton = new QPushButton(centralWidget);
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(10, 20, 86, 54));
+        verticalLayout = new QVBoxLayout(layoutWidget);
+        verticalLayout->setSpacing(6);
+        verticalLayout->setContentsMargins(11, 11, 11, 11);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
+        pushButton = new QPushButton(layoutWidget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(50, 10, 191, 41));
-        pushButton_2 = new QPushButton(centralWidget);
+
+        verticalLayout->addWidget(pushButton);
+
+        pushButton_2 = new QPushButton(layoutWidget);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
-        pushButton_2->setGeometry(QRect(430, 10, 141, 41));
+
+        verticalLayout->addWidget(pushButton_2);
+
+        view = new QTableView(centralWidget);
+        view->setObjectName(QStringLiteral("view"));
+        view->setGeometry(QRect(30, 90, 481, 401));
+        view->setEditTriggers(QAbstractItemView::NoEditTriggers);
         MainWindow->setCentralWidget(centralWidget);
 
         retranslateUi(MainWindow);
@@ -55,7 +71,6 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
-        label->setText(QApplication::translate("MainWindow", "Wait", nullptr));
         pushButton->setText(QApplication::translate("MainWindow", "update check", nullptr));
         pushButton_2->setText(QApplication::translate("MainWindow", "history check", nullptr));
     } // retranslateUi

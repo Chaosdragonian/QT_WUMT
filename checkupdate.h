@@ -1,17 +1,20 @@
-#ifndef CHECKUPDATE_H
+﻿#ifndef CHECKUPDATE_H
 #define CHECKUPDATE_H
 #include <QString>
 #include <QObject>
+#include <qtablewidget.h>
+
+
 
 class checkupdate : public QObject
 {
 
 public:
 
-	QString update();
-	QString history();
-
-
+	QStringList update();
+	QStringList history();
+	//int updateNum();
+	int historyNum();
 };
 
 #endif // CHECKUPDATE_H

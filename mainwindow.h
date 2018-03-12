@@ -1,7 +1,8 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTableWidget>
 class ViewWidget;
 
 namespace Ui {
@@ -23,7 +24,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    ViewWidget *m_MainView;
+
+	QTableWidget* m_pTableWidget;
+
+	QStringList m_TableHeader;
 
 };
 
