@@ -16,7 +16,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QTableView>
+#include <QtWidgets/QTableWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -30,7 +30,7 @@ public:
     QVBoxLayout *verticalLayout;
     QPushButton *pushButton;
     QPushButton *pushButton_2;
-    QTableView *view;
+    QTableWidget *TableWidget;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -57,10 +57,10 @@ public:
 
         verticalLayout->addWidget(pushButton_2);
 
-        view = new QTableView(centralWidget);
-        view->setObjectName(QStringLiteral("view"));
-        view->setGeometry(QRect(30, 90, 481, 401));
-        view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        TableWidget = new QTableWidget(centralWidget);
+        TableWidget->setObjectName(QStringLiteral("TableWidget"));
+        TableWidget->setGeometry(QRect(30, 90, 481, 401));
+        TableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
         MainWindow->setCentralWidget(centralWidget);
 
         retranslateUi(MainWindow);

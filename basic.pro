@@ -34,15 +34,13 @@ TRANSLATIONS    = lang/cs_cs.ts \
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    checkupdate.cpp \
-    mymodel.cpp
+    checkupdate.cpp
 
 HEADERS += \
         mainwindow.h \
     wuapi.h \
     wuerror.h \
-    checkupdate.h \
-    mymodel.h
+    checkupdate.h
 
 FORMS += \
         mainwindow.ui

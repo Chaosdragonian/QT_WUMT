@@ -12,7 +12,7 @@ class checkupdate : public QObject
 public:
 
 	QStringList update();
-	QStringList history();
+	void history(QTableWidget*);
 	//int updateNum();
 	int historyNum();
 };

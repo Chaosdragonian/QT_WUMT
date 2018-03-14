@@ -103,8 +103,8 @@ QStringList checkupdate::update()
 				//}
 				//qDebug(updateName);
 				QString resultstring;
-				resultstring << i + 1 << " : " << QString::fromWCharArray(nameofUpdate, -1) << endl
-				*returnResult <<resultstring << endl;
+//				resultstring << i + 1 << " : " << QString::fromWCharArray(nameofUpdate, -1) << endl;
+	//			*returnResult <<resultstring << endl;
 
 				// bundled updates
 				updateItem->get_BundledUpdates(&bundledUpdates);
@@ -131,11 +131,12 @@ QStringList checkupdate::update()
 
 
 
-QStringList checkupdate::history() {
+void checkupdate::history(QTableWidget *QW) {
 	HRESULT hr;
 	hr = CoInitialize(NULL);
 	QString histories;
 	QStringList updatehistoryList;
+//	QTableWidget *QW = new QTableWidget;
 
 
 
@@ -184,22 +185,11 @@ QStringList checkupdate::history() {
 		UINT length = SysStringLen(updateName);
 		wchar_t *nameofUpdate = new wchar_t[length + 1];
 		wcscpy(nameofUpdate, updateName);
-	//	if (nameofUpdate[35] == 0x2013) {
-	//		nameofUpdate[35] = ' ';
-		//}
-		//outfile << nameofUpdate << std::endl;
-		//QTextStream(&histories) << QString::fromWCharArray(nameofUpdate, -1)<<endl;
+		if (nameofUpdate[35] == 0x2013) {
+			nameofUpdate[35] = ' ';
+		}
+		QTextStream(&histories) << QString::fromWCharArray(nameofUpdate, -1)<<endl;
 
-		//	hr = historyEntry->get_ServiceID(&ClientAppID);
-		//	UINT idlength = SysStringLen(ClientAppID);
-		//	wchar_t *nameofID = new wchar_t[idlength + 1];
-		//	wchar_t *blank = new wchar_t[5];
-		//	wcscpy(nameofID, ClientAppID);
-		//	if (nameofUpdate[35] == 0x2013) {
-		//		nameofUpdate[35] = ' ';
-		//	}
-		//	outfile << nameofID << std::endl;
-		//	std::wcout << nameofID << std::endl;
 
 		hr = historyEntry->get_Date(&retdate);
 
@@ -211,19 +201,15 @@ QStringList checkupdate::history() {
 		int day = dateupdate.GetDay();
 		//outfile << L"update date : " << year << "/" << month << "/" << day << std::endl;
 		QTextStream(&updateDate) << year << "/" << month << "/" << day << endl;
-	//	setitem
 		SysFreeString(updateName);
-		//		SysFreeString(ClientAppID);
-		QString nameofupdateString;
-		nameofupdateString << QString::fromWCharArray(nameofUpdate, -1) <<endl;
-		updatehistoryList << nameofupdateString <<endl;
-		updatehistoryList << updateDate <<endl;
-		return updatehistoryList;
+		//QTableWidgetItem *nameItem = new QTableWidgetItem(histories);
+		QW->setItem(i, 0, new QTableWidgetItem(histories));
+		QW->setItem(i, 1, new QTableWidgetItem(updateDate));
 	}
 	//outfile.close();
 	::CoUninitialize();
 	wcin.get();
-	return updatehistoryList;
+//	return 0;
 
 }
 int checkupdate::historyNum(){
