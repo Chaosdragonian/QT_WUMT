@@ -11,7 +11,8 @@ class checkupdate : public QObject
 
 public:
 
-	QStringList update();
+	void update(QTableWidget*);
+	int updateNum();
 	void history(QTableWidget*);
 	//int updateNum();
 	int historyNum();

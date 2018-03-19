@@ -41,13 +41,10 @@
 using namespace std;
 
 
-QStringList checkupdate::update()
+void checkupdate::update(QTableWidget *QW)
 {
-	QStringList returnResult;
-	HRESULT hr;
-//	QLocale curLocale(QLocale("kor"));
-//	QLocale::setDefault(curLocale);
-	//QTextCodec::codecForName("eucKR");
+			HRESULT hr;
+
 
 			hr = CoInitialize(NULL);
 
@@ -98,14 +95,9 @@ QStringList checkupdate::update()
 				wcscpy(nameofUpdate, updateName);
 				severity = NULL;
 				updateItem->get_MsrcSeverity(&severity);
-				//if (severity != NULL) {
-				//	returnResult << QString::fromWCharArray(L" 보안 업데이트: ", -1) << severity << endl;
-				//}
-				//qDebug(updateName);
 				QString resultstring;
-//				resultstring << i + 1 << " : " << QString::fromWCharArray(nameofUpdate, -1) << endl;
-	//			*returnResult <<resultstring << endl;
-
+				QTextStream(&resultstring) << QString::fromWCharArray(nameofUpdate, -1) << endl;
+				QW->setItem(i, 0, new QTableWidgetItem(resultstring));
 				// bundled updates
 				updateItem->get_BundledUpdates(&bundledUpdates);
 				bundledUpdates->get_Count(&bundledUpdateSize);
@@ -124,11 +116,48 @@ QStringList checkupdate::update()
 			}
 
 			::CoUninitialize();
-			qDebug() << returnResult;
-			return returnResult;
+
 	
 }
+int checkupdate::updateNum() {
+	HRESULT hr;
 
+
+	hr = CoInitialize(NULL);
+
+	IUpdateSession* iUpdate;
+	IUpdateSearcher* searcher;
+	ISearchResult* results;
+	BSTR criteria = SysAllocString(L"IsInstalled=0");
+
+	hr = CoCreateInstance(CLSID_UpdateSession, NULL, CLSCTX_INPROC_SERVER, IID_IUpdateSession, (LPVOID*)&iUpdate);
+	hr = iUpdate->CreateUpdateSearcher(&searcher);
+	//std::wcout.imbue(std::locale("korean"));
+	qDebug() << QString::fromLocal8Bit("업데이트를 찾고 있습니다", -1) << endl;
+	hr = searcher->Search(criteria, &results);
+	SysFreeString(criteria);
+//	switch (hr) {
+//	case S_OK:
+//		qDebug() << L"시스템에 적용 할 수있는 목록:" << endl;
+//		break;
+//	case WU_E_LEGACYSERVER:
+//		qDebug() << L"서버를 찾을수 없다" << endl;
+//	case WU_E_INVALID_CRITERIA:
+//		qDebug() << L"잘못된 검색 기준입니다." << endl;
+//	}
+
+	IUpdateCollection* updateList;
+	IUpdateCollection* bundledUpdates;
+	IUpdate* updateItem;
+	IUpdate* bundledUpdateItem;
+	LONG updateSize;
+	LONG bundledUpdateSize;
+
+
+	results->get_Updates(&updateList);
+	updateList->get_Count(&updateSize);
+	return (int)updateSize;
+}
 
 
 void checkupdate::history(QTableWidget *QW) {
